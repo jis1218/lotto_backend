@@ -14,9 +14,13 @@ def sum_of_balls(request):
 
     row_sums = df.sum(axis=1)
 
+    print(type(row_sums))
+
     return Response(row_sums)
 
 
+@api_view(['GET'])
+@parser_classes([JSONParser])
 def odd_and_even(request):
     df = __get_dataframe__()
     result = {}
@@ -24,11 +28,36 @@ def odd_and_even(request):
     odd_df = df.apply(lambda x: sum(x % 2 != 0), axis=1)
     even_df = df.apply(lambda x: sum(x % 2 == 0), axis=1)
 
-    print(odd_df)
-    print(even_df)
     result_df = pd.concat([odd_df, even_df], axis=1)
     print(result_df)
+    print(type(result_df))
     return Response(result_df)
+
+
+@api_view(['GET'])
+@parser_classes([JSONParser])
+def different_between_first_sixth(request):
+    df = __get_dataframe__()
+
+    print(df['sixth_number'] - df['first_number'])
+
+    return Response(df['sixth_number'] - df['first_number'])
+
+
+@api_view(['GET'])
+@parser_classes([JSONParser])
+def sum_of_1_to_3():
+    df = __get_dataframe__()
+
+    return Response(df['first_number'] + df['second_number'] + df['third_number'])
+
+
+@api_view(['GET'])
+@parser_classes([JSONParser])
+def sum_of_4_to_6():
+    df = __get_dataframe__()
+
+    return Response(df['fourth_number'] + df['fifth_number'] + df['sixth_number'])
 
 
 def __get_dataframe__():
