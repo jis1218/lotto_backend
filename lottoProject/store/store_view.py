@@ -47,4 +47,5 @@ def first_lottery_store(request):
 
     json_data = json.dumps(dtos)
 
+
     return Response(json_data)
