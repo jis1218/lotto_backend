@@ -4,7 +4,7 @@ from rest_framework.decorators import parser_classes
 from rest_framework.parsers import JSONParser
 import pandas as pd
 
-from lottoProject.lotto_history import LottoHistory
+from lottoProject.history.lotto_history import LottoHistory
 
 
 @api_view(['GET'])

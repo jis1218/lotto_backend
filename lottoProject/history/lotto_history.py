@@ -1,6 +1,6 @@
-from peewee import Model, CharField, IntegerField, DateField
+from peewee import IntegerField
 
-from lottoProject.database_setting import BaseModel
+from lottoProject.config.database_setting import BaseModel
 
 
 class LottoHistory(BaseModel):

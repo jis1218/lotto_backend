@@ -17,13 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-import lottoProject.lotto_view
+import lottoProject.store.store_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('sum_of_balls/', lottoProject.lotto_view.sum_of_balls),
-    path('odd_and_even/', lottoProject.lotto_view.odd_and_even),
-    path('different_between_first_sixth/', lottoProject.lotto_view.different_between_first_sixth),
-    path('sum_of_1_to_3/', lottoProject.lotto_view.sum_of_1_to_3),
-    path('sum_of_4_to_6/', lottoProject.lotto_view.sum_of_4_to_6)
+    path('first_lottery_store/', lottoProject.store.store_view.first_lottery_store),
 ]

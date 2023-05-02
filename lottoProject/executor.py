@@ -1,6 +1,6 @@
 import pandas as pd
 
-from lotto_history import LottoHistory
+from history import LottoHistory
 from peewee import *
 import numpy
 import pandas
