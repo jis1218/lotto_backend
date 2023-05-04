@@ -17,6 +17,7 @@ from lottoProject.store.repository.second_lottery_store import SecondLotteryStor
 @api_view(['GET'])
 @parser_classes([JSONParser])
 def first_lottery_store(request):
+    round_number = request.query_params.get('round_number')
     wfls_query = (FirstLotteryStore
                   .select(FirstLotteryStore.address, fn.COUNT(FirstLotteryStore.id).alias('first_lottery'))
                   .group_by(FirstLotteryStore.address)
@@ -37,7 +38,7 @@ def first_lottery_store(request):
               .left_outer_join(wfls_query, on=(FirstLotteryStore.address == wfls_query.c.address))
               .left_outer_join(wsls2_query, on=(FirstLotteryStore.address == wsls2_query.c.address))
               .left_outer_join(LottoStore, on=(FirstLotteryStore.address == LottoStore.address))
-              .where(FirstLotteryStore.round == 1065))
+              .where(FirstLotteryStore.round == round_number))
 
     dtos = []
     for my_data in result.dicts():
@@ -50,9 +51,11 @@ def first_lottery_store(request):
 
     return Response(json_data)
 
+
 @api_view(['GET'])
 @parser_classes([JSONParser])
 def second_lottery_store(request):
+    round_number = request.query_params.get('round_number')
     wfls_query = (FirstLotteryStore
                   .select(FirstLotteryStore.address, fn.COUNT(FirstLotteryStore.id).alias('first_lottery'))
                   .group_by(FirstLotteryStore.address)
@@ -73,7 +76,7 @@ def second_lottery_store(request):
               .left_outer_join(wfls_query, on=(SecondLotteryStore.address == wfls_query.c.address))
               .left_outer_join(wsls2_query, on=(SecondLotteryStore.address == wsls2_query.c.address))
               .left_outer_join(LottoStore, on=(SecondLotteryStore.address == LottoStore.address))
-              .where(SecondLotteryStore.round == 1065))
+              .where(SecondLotteryStore.round == round_number))
 
     dtos = []
     for my_data in result.dicts():
