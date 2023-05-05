@@ -6,8 +6,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 import json
 
-from rest_framework.utils.encoders import JSONEncoder
-
+from lottoProject.store.dto.nearest_store_dto import NearestStoreDto
 from lottoProject.store.dto.win_lottery_info_dto import WinLotteryInfoDto
 from lottoProject.store.repository.first_lottery_store import FirstLotteryStore
 from lottoProject.store.repository.lotto_store import LottoStore
@@ -81,8 +80,35 @@ def second_lottery_store(request):
     dtos = []
     for my_data in result.dicts():
         print(my_data)
-        dto = WinLotteryInfoDto(my_data['round'], my_data['store_name'], my_data['address'], my_data['select_type'],
+        dto = WinLotteryInfoDto(my_data['round'], my_data['store_name'], my_data['address'], 'MANUAL',
                                 my_data['first_lottery'], my_data['second_lottery'], True)
+        dtos.append(dataclasses.asdict(dto))
+
+    json_data = json.dumps(dtos)
+
+    return Response(json_data)
+
+
+@api_view(['GET'])
+@parser_classes([JSONParser])
+def nearest_store(request):
+    longitude = request.query_params.get('longitude')
+    latitude = request.query_params.get('latitude')
+    within = request.query_params.get('distance')
+
+    point = fn.ST_PointFromText(f'POINT({longitude} {latitude})')
+    distance_col = fn.ST_Distance_Sphere(LottoStore.location, point).alias('distance')
+
+    result = (LottoStore
+              .select(LottoStore, distance_col)
+              .where((distance_col <= within) & (LottoStore.active == True))
+              .order_by(distance_col.asc()))
+
+
+    dtos = []
+    for my_data in result.dicts():
+        print(my_data)
+        dto = NearestStoreDto(my_data['store_name'], my_data['address'], my_data['longitude'], my_data['latitude'], my_data['distance'])
         dtos.append(dataclasses.asdict(dto))
 
     json_data = json.dumps(dtos)

@@ -28,4 +28,6 @@ urlpatterns = [
     path('sum_of_1_to_3/', lottoProject.history.lotto_view.sum_of_1_to_3),
     path('sum_of_4_to_6/', lottoProject.history.lotto_view.sum_of_4_to_6),
     path('first_lottery_store', lottoProject.store.store_view.first_lottery_store),
+    path('second_lottery_store', lottoProject.store.store_view.second_lottery_store),
+    path('nearest_store', lottoProject.store.store_view.nearest_store),
 ]
