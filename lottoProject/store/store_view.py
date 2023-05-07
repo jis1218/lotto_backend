@@ -97,18 +97,17 @@ def nearest_store(request):
     within = request.query_params.get('distance')
 
     point = fn.ST_PointFromText(f'POINT({longitude} {latitude})')
-    distance_col = fn.ST_Distance_Sphere(LottoStore.location, point).alias('distance')
 
     result = (LottoStore
-              .select(LottoStore, distance_col)
-              .where((distance_col <= within) & (LottoStore.active == True))
-              .order_by(distance_col.asc()))
-
-
+              .select(LottoStore.store_name, LottoStore.address, LottoStore.active, LottoStore.latitude,
+                      LottoStore.longitude, fn.ST_Distance_Sphere(LottoStore.location, point).alias('distance'))
+              .where((fn.ST_Distance_Sphere(LottoStore.location, point) <= within) & (LottoStore.active == True))
+              .order_by(fn.alias('distance').asc()))
     dtos = []
     for my_data in result.dicts():
         print(my_data)
-        dto = NearestStoreDto(my_data['store_name'], my_data['address'], my_data['longitude'], my_data['latitude'], my_data['distance'])
+        dto = NearestStoreDto(my_data['store_name'], my_data['address'], my_data['longitude'], my_data['latitude'],
+                              my_data['distance'])
         dtos.append(dataclasses.asdict(dto))
 
     json_data = json.dumps(dtos)
