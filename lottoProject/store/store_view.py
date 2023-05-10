@@ -98,16 +98,31 @@ def nearest_store(request):
 
     point = fn.ST_PointFromText(f'POINT({longitude} {latitude})')
 
+    wfls_query = (FirstLotteryStore
+                  .select(FirstLotteryStore.address, fn.COUNT(FirstLotteryStore.id).alias('first_lottery'))
+                  .group_by(FirstLotteryStore.address)
+                  .alias('wfls'))
+
+    wsls2_query = (SecondLotteryStore
+                   .select(SecondLotteryStore.address, fn.COUNT(SecondLotteryStore.id).alias('second_lottery'))
+                   .group_by(SecondLotteryStore.address)
+                   .alias('wsls2'))
+
     result = (LottoStore
               .select(LottoStore.store_name, LottoStore.address, LottoStore.active, LottoStore.latitude,
-                      LottoStore.longitude, fn.ST_Distance_Sphere(LottoStore.location, point).alias('distance'))
+                      LottoStore.longitude, fn.ST_Distance_Sphere(LottoStore.location, point).alias('distance'),
+                      wfls_query.c.first_lottery.alias('first_lottery'),
+                      wsls2_query.c.second_lottery.alias('second_lottery')
+                      )
+              .left_outer_join(wfls_query, on=(LottoStore.address == wfls_query.c.address))
+              .left_outer_join(wsls2_query, on=(LottoStore.address == wsls2_query.c.address))
               .where((fn.ST_Distance_Sphere(LottoStore.location, point) <= within) & (LottoStore.active == True))
               .order_by(fn.alias('distance').asc()))
     dtos = []
     for my_data in result.dicts():
         print(my_data)
         dto = NearestStoreDto(my_data['store_name'], my_data['address'], my_data['longitude'], my_data['latitude'],
-                              my_data['distance'])
+                              my_data['distance'], my_data['first_lottery'], my_data['second_lottery'])
         dtos.append(dataclasses.asdict(dto))
 
     json_data = json.dumps(dtos)

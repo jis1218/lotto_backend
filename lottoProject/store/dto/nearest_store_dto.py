@@ -8,3 +8,5 @@ class NearestStoreDto:
     longitude: str
     latitude: str
     distance: str
+    first_lottery: int
+    second_lottery: int
