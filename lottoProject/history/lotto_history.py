@@ -1,12 +1,13 @@
-from peewee import IntegerField
+from peewee import IntegerField, PrimaryKeyField
 
 from lottoProject.config.database_setting import BaseModel
 
 
 class LottoHistory(BaseModel):
     class Meta:
-        db_table = "lotto_win_history"
+        db_table = "lotto_win_number_history"
     # draw_date = DateField()
+    round = PrimaryKeyField()
     first_number = IntegerField()
     second_number = IntegerField()
     third_number = IntegerField()
