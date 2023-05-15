@@ -46,9 +46,9 @@ def first_lottery_store(request):
                                 my_data['first_lottery'], my_data['second_lottery'], True)
         dtos.append(dataclasses.asdict(dto))
 
-    json_data = json.dumps(dtos)
+    json_data = json.dumps(dtos, ensure_ascii=False)
 
-    return Response(json_data)
+    return Response(json_data, content_type='text/plain')
 
 
 @api_view(['GET'])
@@ -84,7 +84,7 @@ def second_lottery_store(request):
                                 my_data['first_lottery'], my_data['second_lottery'], True)
         dtos.append(dataclasses.asdict(dto))
 
-    json_data = json.dumps(dtos)
+    json_data = json.dumps(dtos, ensure_ascii=False)
 
     return Response(json_data)
 
@@ -125,6 +125,6 @@ def nearest_store(request):
                               my_data['distance'], my_data['first_lottery'], my_data['second_lottery'])
         dtos.append(dataclasses.asdict(dto))
 
-    json_data = json.dumps(dtos)
+    json_data = json.dumps(dtos, ensure_ascii=False)
 
     return Response(json_data)
