@@ -11,15 +11,17 @@ from lottoProject.statistics.repository.statistics_menu import StatisticsMenu
 
 @api_view(['GET'])
 @parser_classes([JSONParser])
-def first_lottery_store(request):
-    statistics_menu = StatisticsMenu.select(StatisticsMenu.id, StatisticsMenu.menu_name, StatisticsMenu.order)
+def statistics_menu(request):
+    statistics_menu_list = StatisticsMenu.select(StatisticsMenu.id, StatisticsMenu.menu_name, StatisticsMenu.order)
+
+    print(statistics_menu_list.sql())
 
     dtos = []
-    for my_data in statistics_menu.dicts():
+    for my_data in statistics_menu_list.dicts():
         print(my_data)
         dto = StatisticsMenuDto(my_data['id'], my_data['menu_name'], my_data['order'])
         dtos.append(dataclasses.asdict(dto))
 
         json_data = json.dumps(dtos, ensure_ascii=False)
 
-        return Response(json_data)
+    return Response(json_data)
