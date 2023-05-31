@@ -26,13 +26,17 @@ def odd_and_even(request):
     df = __get_dataframe__()
     result = {}
 
-    odd_df = df.apply(lambda x: sum(x % 2 != 0), axis=1)
-    even_df = df.apply(lambda x: sum(x % 2 == 0), axis=1)
+    df_subset = df.drop(['round'], axis=1)
 
-    result_df = pd.concat([odd_df, even_df], axis=1)
+    odd_df = df_subset.apply(lambda x: sum(x % 2 != 0), axis=1)
+    odd_df = odd_df.rename('odd')
+    even_df = df_subset.apply(lambda x: sum(x % 2 == 0), axis=1)
+    even_df = even_df.rename('even')
+
+    result_df = pd.concat([df['round'], odd_df, even_df], axis=1)
     print(result_df)
     print(type(result_df))
-    return Response(result_df)
+    return Response(result_df.to_json(orient='records'))
 
 
 @api_view(['GET'])
